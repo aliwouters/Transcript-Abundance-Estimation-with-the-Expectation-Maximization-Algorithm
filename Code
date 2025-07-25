@@ -1,0 +1,49 @@
+#Part 1:
+import numpy as np
+
+def em_rsem(compatibility_matrix, effective_lengths, theta_proportion, num_iterations):
+
+    n_reads, n_isoforms = compatibility_matrix.shape
+    theta = np.array(theta_proportion, dtype=np.float64)
+
+    for _ in range(num_iterations):
+
+        norm_theta = theta / effective_lengths
+
+        prob_matrix = compatibility_matrix * norm_theta
+        row_sums = prob_matrix.sum(axis=1, keepdims=True)
+        responsibilities = prob_matrix / row_sums
+
+        expected_counts = responsibilities.sum(axis=0)
+
+        theta = expected_counts / expected_counts.sum()
+
+    return theta
+
+#Part 2:
+
+compat = np.array([
+    [1, 1],
+    [1, 0],
+    [0, 1]
+])
+eff_lengths_equal = np.array([10.0, 20.0])
+theta_init = np.array([0.5, 0.5])
+num_iterations = 100
+
+theta_result_equal = em_rsem(compat, eff_lengths_equal, theta_init, num_iterations)
+print(theta_result_equal)
+
+#Part 3:
+
+compat = np.array([
+    [1, 1],
+    [1, 0],
+    [0, 1]
+])
+eff_lengths_equal = np.array([10.0, 10.0])
+theta_init = np.array([0.5, 0.5])
+num_iterations = 100
+
+theta_result_equal = em_rsem(compat, eff_lengths_equal, theta_init, num_iterations)
+print(theta_result_equal)
